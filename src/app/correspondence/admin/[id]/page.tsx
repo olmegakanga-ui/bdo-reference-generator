@@ -81,7 +81,7 @@ export default async function CorrespondenceEditPage({ params }: Props) {
 
   const { data: departments, error: departmentsError } = await supabase
     .from("departments")
-    .select("id, name, correspondence_code")
+    .select("id, name, engagement_code, correspondence_code")
     .order("name");
 
   const { data: signatories, error: signatoriesError } = await supabase
