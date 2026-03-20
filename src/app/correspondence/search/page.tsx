@@ -2,17 +2,31 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { formatDateDisplay } from "@/lib/reference-utils";
 
-type SearchPageProps = PageProps<"/correspondence/search">;
+type Props = {
+  searchParams: Promise<{
+    recipient?: string | string[];
+    issueDate?: string | string[];
+    departmentId?: string | string[];
+    senderId?: string | string[];
+  }>;
+};
 
-export default async function CorrespondenceSearchPage(
-  props: SearchPageProps
-) {
-  const searchParams = await props.searchParams;
+function getSingleValue(value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return value[0] ?? "";
+  }
+  return value ?? "";
+}
 
-  const recipient = searchParams.recipient ?? "";
-  const issueDate = searchParams.issueDate ?? "";
-  const departmentId = searchParams.departmentId ?? "";
-  const senderId = searchParams.senderId ?? "";
+export default async function CorrespondenceSearchPage({
+  searchParams,
+}: Props) {
+  const params = await searchParams;
+
+  const recipient = getSingleValue(params.recipient);
+  const issueDate = getSingleValue(params.issueDate);
+  const departmentId = getSingleValue(params.departmentId);
+  const senderId = getSingleValue(params.senderId);
 
   const supabase = await createClient();
 
