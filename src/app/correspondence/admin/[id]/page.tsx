@@ -78,7 +78,7 @@ export default async function CorrespondenceEditPage({ params }: Props) {
   if (recordError || !record) {
     throw new Error("Document introuvable.");
   }
-
+  
   const { data: departments, error: departmentsError } = await supabase
     .from("departments")
     .select("id, name, engagement_code, correspondence_code")
