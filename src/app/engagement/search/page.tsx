@@ -1,19 +1,33 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { formatDateDisplay } from "@/lib/reference-utils";
 
-type SearchPageProps = PageProps<"/engagement/search">;
+type Props = {
+  searchParams: Promise<{
+    client?: string | string[];
+    contractDate?: string | string[];
+    departmentId?: string | string[];
+    signatoryId?: string | string[];
+  }>;
+};
 
-export default async function EngagementSearchPage(props: SearchPageProps) {
-  const searchParams = await props.searchParams;
+function getSingleValue(value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return value[0] ?? "";
+  }
+  return value ?? "";
+}
 
-  const client = searchParams.client ?? "";
-  const contractDate = searchParams.contractDate ?? "";
-  const departmentId = searchParams.departmentId ?? "";
-  const signatoryId = searchParams.signatoryId ?? "";
+export default async function EngagementSearchPage({ searchParams }: Props) {
+  const params = await searchParams;
+
+  const client = getSingleValue(params.client);
+  const contractDate = getSingleValue(params.contractDate);
+  const departmentId = getSingleValue(params.departmentId);
+  const signatoryId = getSingleValue(params.signatoryId);
 
   const supabase = await createClient();
 
-  // Charger les listes déroulantes
   const { data: departments, error: departmentsError } = await supabase
     .from("departments")
     .select("id, name")
@@ -33,7 +47,6 @@ export default async function EngagementSearchPage(props: SearchPageProps) {
     throw new Error("Impossible de charger les signataires.");
   }
 
-  // Construire la requête de recherche
   let query = supabase
     .from("engagement_letters")
     .select(`
@@ -92,9 +105,7 @@ export default async function EngagementSearchPage(props: SearchPageProps) {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">
             Recherche ancien numéro de référence
           </h1>
-          <p className="text-gray-600 mb-8">
-            Lettre d’engagement
-          </p>
+          <p className="text-gray-600 mb-8">Lettre d’engagement</p>
 
           <form method="GET" className="grid md:grid-cols-2 gap-6">
             <div>
@@ -235,11 +246,15 @@ export default async function EngagementSearchPage(props: SearchPageProps) {
                       </p>
                       <p>
                         <span className="font-semibold">Date du contrat :</span>{" "}
-                        {item.contract_date}
+                        {formatDateDisplay(item.contract_date)}
                       </p>
                       <p>
                         <span className="font-semibold">Signataire :</span>{" "}
                         {signatory?.full_name ?? "-"}
+                      </p>
+                      <p>
+                        <span className="font-semibold">N° :</span>{" "}
+                        {item.sequence_number}
                       </p>
                     </div>
                   </div>
