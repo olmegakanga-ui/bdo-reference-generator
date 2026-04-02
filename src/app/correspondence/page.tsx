@@ -2,46 +2,42 @@ import Link from "next/link";
 
 export default function CorrespondencePage() {
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-10">
-        <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">
-          Correspondance
-        </h1>
+    <main className="app-page flex items-center justify-center p-6">
+      <div className="app-card w-full max-w-3xl p-8 md:p-10">
+        <div className="mb-8">
+          <h1 className="app-title">Correspondance</h1>
+          <p className="app-subtitle">
+            Générez, recherchez ou modifiez un numéro de référence.
+          </p>
+        </div>
 
         <div className="grid gap-4">
           <Link
             href="/correspondence/new"
-            className="bg-green-600 hover:bg-green-700 text-white text-center font-semibold py-4 rounded-xl"
+            className="app-btn app-btn-green py-4 text-base"
           >
             Nouveau numéro de référence
           </Link>
 
           <Link
             href="/correspondence/search"
-            className="bg-amber-500 hover:bg-amber-600 text-white text-center font-semibold py-4 rounded-xl"
+            className="app-btn app-btn-outline py-4 text-base"
           >
             Recherche ancien numéro de référence
           </Link>
 
           <Link
             href="/correspondence/admin"
-            className="bg-red-600 hover:bg-red-700 text-white text-center font-semibold py-4 rounded-xl"
+            className="app-btn app-btn-amber py-4 text-base"
           >
             Éditer un numéro de référence
           </Link>
 
-          <div className="grid grid-cols-2 gap-4 mt-6">
-            <Link
-              href="/"
-              className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+          <div className="grid grid-cols-2 gap-4 pt-3">
+            <Link href="/" className="app-btn app-btn-outline">
               Home
             </Link>
-
-            <Link
-              href="/"
-              className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/" className="app-btn app-btn-outline">
               Précédent
             </Link>
           </div>

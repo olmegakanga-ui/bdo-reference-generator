@@ -17,18 +17,16 @@ export default async function EngagementEditPage({ params }: Props) {
 
   if (!authUser) {
     return (
-      <main className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Accès administrateur requis
-          </h1>
-          <p className="text-gray-600 mb-8">
+      <main className="app-page flex items-center justify-center p-6">
+        <div className="app-card w-full max-w-2xl p-8 text-center">
+          <h1 className="app-title mb-4">Accès administrateur requis</h1>
+          <p className="app-subtitle mb-8">
             Veuillez vous connecter avec un compte administrateur.
           </p>
 
           <Link
             href={`/admin/login?next=/engagement/admin/${recordId}`}
-            className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl"
+            className="app-btn app-btn-blue px-8 py-4"
           >
             Se connecter
           </Link>
@@ -39,18 +37,18 @@ export default async function EngagementEditPage({ params }: Props) {
 
   if (!appUser || appUser.role !== "admin") {
     return (
-      <main className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-3xl font-bold text-red-700 mb-4">
+      <main className="app-page flex items-center justify-center p-6">
+        <div className="app-card w-full max-w-2xl p-8 text-center">
+          <h1 className="text-3xl font-extrabold text-red-700 mb-4">
             Accès refusé
           </h1>
-          <p className="text-gray-700 mb-8">
+          <p className="text-slate-700 mb-8">
             Vous n’avez pas le droit de modifier ce document.
           </p>
 
           <Link
             href="/engagement/admin"
-            className="inline-block border border-gray-300 font-semibold py-3 px-6 rounded-xl hover:bg-gray-50"
+            className="app-btn app-btn-outline px-8 py-4"
           >
             Retour
           </Link>

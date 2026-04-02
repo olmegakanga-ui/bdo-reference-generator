@@ -6,44 +6,46 @@ import SignOutButton from "@/components/admin/sign-out-button";
 
 type Props = {
   searchParams: Promise<{
-    client?: string;
-    contractDate?: string;
-    departmentId?: string;
-    signatoryId?: string;
+    client?: string | string[];
+    contractDate?: string | string[];
+    departmentId?: string | string[];
+    signatoryId?: string | string[];
   }>;
 };
 
+function getSingleValue(value?: string | string[]) {
+  if (Array.isArray(value)) {
+    return value[0] ?? "";
+  }
+  return value ?? "";
+}
+
 export default async function EngagementAdminPage({ searchParams }: Props) {
   const params = await searchParams;
-  const client = params.client ?? "";
-  const contractDate = params.contractDate ?? "";
-  const departmentId = params.departmentId ?? "";
-  const signatoryId = params.signatoryId ?? "";
+  const client = getSingleValue(params.client);
+  const contractDate = getSingleValue(params.contractDate);
+  const departmentId = getSingleValue(params.departmentId);
+  const signatoryId = getSingleValue(params.signatoryId);
 
   const { authUser, appUser } = await getCurrentAppUser();
 
   if (!authUser) {
     return (
-      <main className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-3xl font-bold text-gray-900 mb-4">
-            Accès administrateur requis
-          </h1>
-          <p className="text-gray-600 mb-8">
+      <main className="app-page flex items-center justify-center p-6">
+        <div className="app-card w-full max-w-2xl p-8 text-center">
+          <h1 className="app-title mb-4">Accès administrateur requis</h1>
+          <p className="app-subtitle mb-8">
             Veuillez vous connecter avec un compte administrateur.
           </p>
 
           <div className="grid grid-cols-2 gap-4">
             <Link
               href="/admin/login?next=/engagement/admin"
-              className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl"
+              className="app-btn app-btn-blue py-4"
             >
               Se connecter
             </Link>
-            <Link
-              href="/"
-              className="border border-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/" className="app-btn app-btn-outline py-4">
               Home
             </Link>
           </div>
@@ -54,33 +56,24 @@ export default async function EngagementAdminPage({ searchParams }: Props) {
 
   if (!appUser || appUser.role !== "admin") {
     return (
-      <main className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-        <div className="w-full max-w-2xl bg-white rounded-2xl shadow-xl p-8 text-center">
-          <h1 className="text-3xl font-bold text-red-700 mb-4">
+      <main className="app-page flex items-center justify-center p-6">
+        <div className="app-card w-full max-w-2xl p-8 text-center">
+          <h1 className="text-3xl font-extrabold text-red-700 mb-4">
             Accès refusé
           </h1>
-          <p className="text-gray-700 mb-6">
+          <p className="text-slate-700 mb-4">
             Vous n’avez pas le droit de modifier un numéro de référence.
           </p>
-          <p className="text-gray-600 mb-8">
-            Veuillez contacter l’administrateur ou le partenaire signataire du
-            document.
+          <p className="app-subtitle mb-8">
+            Veuillez contacter l’administrateur ou le partenaire signataire du document.
           </p>
 
           <div className="grid grid-cols-3 gap-4">
             <SignOutButton />
-
-            <Link
-              href="/"
-              className="border border-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/" className="app-btn app-btn-outline py-4">
               Home
             </Link>
-
-            <Link
-              href="/engagement"
-              className="border border-gray-300 font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/engagement" className="app-btn app-btn-outline py-4">
               Précédent
             </Link>
           </div>
@@ -160,50 +153,51 @@ export default async function EngagementAdminPage({ searchParams }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Éditer un numéro de référence
-          </h1>
-          <p className="text-gray-600 mb-2">Lettre d’engagement</p>
-          <p className="text-sm text-green-700 mb-8">
-            Connecté en tant que {appUser.full_name} ({appUser.email})
-          </p>
-
-          <form method="GET" className="grid md:grid-cols-2 gap-6">
+    <main className="app-page p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div className="app-card p-8 md:p-10">
+          <div className="mb-8 flex items-start justify-between gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Nom du client
-              </label>
+              <h1 className="app-title">Administration</h1>
+              <p className="app-subtitle">Édition des lettres d’engagement</p>
+            </div>
+
+            <div className="hidden md:flex h-14 w-14 items-center justify-center rounded-2xl bg-amber-500 text-white font-extrabold shadow-lg">
+              AD
+            </div>
+          </div>
+
+          <div className="mb-6 rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
+            Connecté en tant que <span className="font-bold">{appUser.full_name}</span> ({appUser.email})
+          </div>
+
+          <form method="GET" className="grid gap-6 md:grid-cols-2">
+            <div>
+              <label className="app-label">Nom du client</label>
               <input
                 type="text"
                 name="client"
                 defaultValue={client}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Date du contrat
-              </label>
+              <label className="app-label">Date du contrat</label>
               <input
                 type="date"
                 name="contractDate"
                 defaultValue={contractDate}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Département
-              </label>
+              <label className="app-label">Département</label>
               <select
                 name="departmentId"
                 defaultValue={departmentId}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-select"
               >
                 <option value="">-- Tous les départements --</option>
                 {departments?.map((department) => (
@@ -215,13 +209,11 @@ export default async function EngagementAdminPage({ searchParams }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Signataire
-              </label>
+              <label className="app-label">Signataire</label>
               <select
                 name="signatoryId"
                 defaultValue={signatoryId}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-select"
               >
                 <option value="">-- Tous les signataires --</option>
                 {signatories?.map((signatory) => (
@@ -232,52 +224,39 @@ export default async function EngagementAdminPage({ searchParams }: Props) {
               </select>
             </div>
 
-            <div className="md:col-span-2 grid md:grid-cols-4 gap-4 pt-2">
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl"
-              >
+            <div className="md:col-span-2 grid gap-4 md:grid-cols-4 pt-2">
+              <button type="submit" className="app-btn app-btn-amber py-4">
                 Recherche
               </button>
 
-              <Link
-                href="/engagement/admin"
-                className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-              >
+              <Link href="/engagement/admin" className="app-btn app-btn-outline py-4">
                 Réinitialiser
               </Link>
 
-              <Link
-                href="/"
-                className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-              >
+              <Link href="/" className="app-btn app-btn-outline py-4">
                 Home
               </Link>
 
-              <Link
-                href="/engagement"
-                className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-              >
+              <Link href="/engagement" className="app-btn app-btn-outline py-4">
                 Précédent
               </Link>
             </div>
           </form>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Résultats</h2>
+        <div className="app-card p-8 md:p-10">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">Documents trouvés</h2>
             {hasFilters && (
-              <span className="text-sm text-gray-500">
+              <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600">
                 {results?.length ?? 0} résultat(s)
               </span>
             )}
           </div>
 
           {!hasFilters ? (
-            <div className="border border-dashed border-gray-300 rounded-2xl p-8 text-center text-gray-500">
-              Renseigne au moins un critère de recherche puis clique sur
-              Recherche.
+            <div className="app-info text-center">
+              Renseigne au moins un critère de recherche puis clique sur Recherche.
             </div>
           ) : results && results.length > 0 ? (
             <div className="space-y-4">
@@ -293,13 +272,22 @@ export default async function EngagementAdminPage({ searchParams }: Props) {
                 return (
                   <div
                     key={item.id}
-                    className="border border-gray-200 rounded-2xl p-5 bg-gray-50"
+                    className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm"
                   >
-                    <p className="text-lg font-bold text-blue-800 break-all mb-3">
-                      {item.reference_number}
-                    </p>
+                    <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <p className="break-all text-lg font-extrabold text-amber-700">
+                        {item.reference_number}
+                      </p>
 
-                    <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-700 mb-4">
+                      <Link
+                        href={`/engagement/admin/${item.id}`}
+                        className="app-btn app-btn-amber px-5 py-3"
+                      >
+                        Modifier
+                      </Link>
+                    </div>
+
+                    <div className="grid gap-3 text-sm text-slate-700 md:grid-cols-2">
                       <p>
                         <span className="font-semibold">Nom du client :</span>{" "}
                         {item.client_name}
@@ -317,19 +305,12 @@ export default async function EngagementAdminPage({ searchParams }: Props) {
                         {signatory?.full_name ?? "-"}
                       </p>
                     </div>
-
-                    <Link
-                      href={`/engagement/admin/${item.id}`}
-                      className="inline-block bg-amber-500 hover:bg-amber-600 text-white font-semibold px-5 py-3 rounded-xl"
-                    >
-                      Modifier
-                    </Link>
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="border border-dashed border-red-300 bg-red-50 rounded-2xl p-8 text-center text-red-700">
+            <div className="app-error text-center">
               Aucun numéro de référence trouvé pour cette recherche.
             </div>
           )}

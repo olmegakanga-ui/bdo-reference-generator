@@ -1,4 +1,5 @@
 import Link from "next/link";
+import CopyReferenceButton from "@/components/shared/copy-reference-button";
 
 type Props = {
   searchParams: Promise<{
@@ -11,24 +12,25 @@ export default async function EngagementResultPage({ searchParams }: Props) {
   const reference = params.reference ?? "";
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-10 text-center">
-        <h1 className="text-3xl font-bold text-gray-900 mb-4">
-          Voici le numéro de référence
-        </h1>
-
-        <div className="bg-blue-50 border border-blue-200 rounded-2xl px-6 py-5 mb-8">
-          <p className="text-xl font-semibold text-blue-900 break-all">
-            {reference}
-          </p>
+    <main className="app-page flex items-center justify-center p-6">
+      <div className="app-card w-full max-w-2xl p-10 text-center">
+        <div className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-600 text-white text-2xl shadow-lg">
+          ✓
         </div>
 
-        <Link
-          href="/"
-          className="inline-block bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 px-6 rounded-xl"
-        >
-          Home
-        </Link>
+        <h1 className="app-title">Numéro généré</h1>
+        <p className="app-subtitle mb-8">Lettre d’engagement</p>
+
+        <div className="app-info break-all text-lg font-bold">
+          {reference}
+        </div>
+
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          <CopyReferenceButton value={reference} color="blue" />
+          <Link href="/" className="app-btn app-btn-outline px-8 py-4">
+            Retour à l’accueil
+          </Link>
+        </div>
       </div>
     </main>
   );

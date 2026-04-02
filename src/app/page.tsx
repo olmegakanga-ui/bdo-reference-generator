@@ -3,40 +3,54 @@ import { createClient } from "@/lib/supabase/server";
 
 export default async function HomePage() {
   const supabase = await createClient();
-
-  // Déconnexion automatique à chaque retour sur la page Home
   await supabase.auth.signOut();
 
   return (
-    <main className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
-      <div className="w-full max-w-2xl bg-white shadow-xl rounded-2xl p-10 text-center">
-        <div className="mb-6">
-          <div className="w-24 h-24 mx-auto rounded-full bg-gray-200 flex items-center justify-center text-gray-600 font-bold text-xl">
-            LOGO
+    <main className="relative min-h-screen overflow-hidden">
+      <div className="absolute inset-0">
+        <img
+          src="/images/bg.jpg"
+          alt="Background"
+          className="h-full w-full object-cover object-left"
+        />
+      </div>
+
+      <div className="absolute inset-0 bg-black/35" />
+
+      <div className="relative z-10 flex min-h-screen items-center justify-center px-6 py-10 md:px-16">
+        <div className="w-full max-w-md rounded-[28px] border border-white/20 bg-white/12 p-8 text-white shadow-2xl backdrop-blur-md">
+          <div className="mb-6 flex justify-center">
+            <img
+              src="/images/logo.png"
+              alt="BDO Logo"
+              className="h-16 w-auto object-contain"
+            />
           </div>
-        </div>
 
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          BDO DRC
-        </h1>
-        <p className="text-gray-600 mb-10">
-          Générateur de numéros de référence
-        </p>
+          <div className="text-center">
+            <h1 className="text-3xl font-extrabold tracking-tight md:text-4xl">
+              Générateur de références
+            </h1>
+            <p className="mt-3 text-sm text-white/85 md:text-base">
+              Lettres d’engagement et correspondances
+            </p>
+          </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
-          <Link
-            href="/engagement"
-            className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-4 px-6 rounded-xl transition"
-          >
-            Lettre d’engagement
-          </Link>
+          <div className="mt-8 grid gap-4">
+            <Link
+              href="/engagement"
+              className="app-btn app-btn-blue w-full py-4"
+            >
+              Lettre d’engagement
+            </Link>
 
-          <Link
-            href="/correspondence"
-            className="bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-xl transition"
-          >
-            Correspondance
-          </Link>
+            <Link
+              href="/correspondence"
+              className="app-btn app-btn-green w-full py-4"
+            >
+              Correspondance
+            </Link>
+          </div>
         </div>
       </div>
     </main>

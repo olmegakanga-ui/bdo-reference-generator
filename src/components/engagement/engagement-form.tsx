@@ -1,8 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
-import { useActionState } from "react";
+import { useActionState, useMemo, useState } from "react";
 import type { Department, Signatory } from "@/types";
 import { createEngagementReference } from "@/app/engagement/new/actions";
 
@@ -38,111 +37,103 @@ export default function EngagementForm({ departments, signatories }: Props) {
   }, [clientName, departmentId, contractDate, signatoryId]);
 
   return (
-    <main className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Nouveau numéro - Lettre d’engagement
-        </h1>
-        <p className="text-gray-600 mb-8">
-          Renseigne les champs obligatoires pour générer un numéro de référence.
-        </p>
-
-        <form action={formAction} className="space-y-6">
+    <main className="app-page flex items-center justify-center p-6">
+      <div className="app-card w-full max-w-4xl p-8 md:p-10">
+        <div className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Nom du client *
-            </label>
-            <input
-              type="text"
-              name="clientName"
-              value={clientName}
-              onChange={(e) => setClientName(e.target.value)}
-              placeholder="Ex: FINCA RDC"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-            />
+            <h1 className="app-title">Nouveau numéro</h1>
+            <p className="app-subtitle">Lettre d’engagement</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Département *
-            </label>
-            <select
-              name="departmentId"
-              value={departmentId}
-              onChange={(e) => setDepartmentId(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">-- Choisir un département --</option>
-              {departments.map((department) => (
-                <option key={department.id} value={department.id}>
-                  {department.name}
-                </option>
-              ))}
-            </select>
+          <div className="hidden md:flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white font-extrabold shadow-lg">
+            LE
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Date du contrat *
-            </label>
-            <input
-              type="date"
-              name="contractDate"
-              value={contractDate}
-              onChange={(e) => setContractDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Signataire *
-            </label>
-            <select
-              name="signatoryId"
-              value={signatoryId}
-              onChange={(e) => setSignatoryId(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="">-- Choisir un signataire --</option>
-              {signatories.map((signatory) => (
-                <option key={signatory.id} value={signatory.id}>
-                  {signatory.full_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {state?.error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
-              {state.error}
+        <form action={formAction} className="space-y-7">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <label className="app-label">Nom du client *</label>
+              <input
+                type="text"
+                name="clientName"
+                value={clientName}
+                onChange={(e) => setClientName(e.target.value)}
+                placeholder="Ex: FINCA RDC"
+                className="app-input"
+              />
             </div>
-          )}
 
-          <div className="grid grid-cols-3 gap-4 pt-4">
+            <div>
+              <label className="app-label">Département *</label>
+              <select
+                name="departmentId"
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+                className="app-select"
+              >
+                <option value="">-- Choisir un département --</option>
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="app-label">Date du contrat *</label>
+              <input
+                type="date"
+                name="contractDate"
+                value={contractDate}
+                onChange={(e) => setContractDate(e.target.value)}
+                className="app-input"
+              />
+            </div>
+
+            <div>
+              <label className="app-label">Signataire *</label>
+              <select
+                name="signatoryId"
+                value={signatoryId}
+                onChange={(e) => setSignatoryId(e.target.value)}
+                className="app-select"
+              >
+                <option value="">-- Choisir un signataire --</option>
+                {signatories.map((signatory) => (
+                  <option key={signatory.id} value={signatory.id}>
+                    {signatory.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="app-info">
+            Tous les champs marqués d’un astérisque sont obligatoires pour générer le numéro de référence.
+          </div>
+
+          {state?.error && <div className="app-error">{state.error}</div>}
+
+          <div className="grid gap-4 md:grid-cols-3">
             <button
               type="submit"
               disabled={!isFormValid || isPending}
-              className={`font-semibold py-3 rounded-xl transition ${
+              className={`app-btn py-4 ${
                 isFormValid && !isPending
-                  ? "bg-blue-600 hover:bg-blue-700 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  ? "app-btn-blue"
+                  : "cursor-not-allowed bg-gray-300 text-gray-500"
               }`}
             >
-              {isPending ? "Génération..." : "Générer le numéro de référence"}
+              {isPending ? "Génération..." : "Générer le numéro"}
             </button>
 
-            <Link
-              href="/"
-              className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/" className="app-btn app-btn-outline py-4">
               Home
             </Link>
 
-            <Link
-              href="/engagement"
-              className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/engagement" className="app-btn app-btn-outline py-4">
               Précédent
             </Link>
           </div>

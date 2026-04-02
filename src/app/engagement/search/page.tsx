@@ -99,48 +99,48 @@ export default async function EngagementSearchPage({ searchParams }: Props) {
   }
 
   return (
-    <main className="min-h-screen bg-gray-100 p-6">
-      <div className="max-w-6xl mx-auto space-y-6">
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">
-            Recherche ancien numéro de référence
-          </h1>
-          <p className="text-gray-600 mb-8">Lettre d’engagement</p>
-
-          <form method="GET" className="grid md:grid-cols-2 gap-6">
+    <main className="app-page p-6">
+      <div className="mx-auto max-w-6xl space-y-6">
+        <div className="app-card p-8 md:p-10">
+          <div className="mb-8 flex items-start justify-between gap-4">
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Nom du client
-              </label>
+              <h1 className="app-title">Recherche</h1>
+              <p className="app-subtitle">Lettre d’engagement</p>
+            </div>
+
+            <div className="hidden md:flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-600 text-white font-extrabold shadow-lg">
+              LE
+            </div>
+          </div>
+
+          <form method="GET" className="grid gap-6 md:grid-cols-2">
+            <div>
+              <label className="app-label">Nom du client</label>
               <input
                 type="text"
                 name="client"
                 defaultValue={client}
                 placeholder="Ex: FINCA RDC"
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Date du contrat
-              </label>
+              <label className="app-label">Date du contrat</label>
               <input
                 type="date"
                 name="contractDate"
                 defaultValue={contractDate}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-input"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Département
-              </label>
+              <label className="app-label">Département</label>
               <select
                 name="departmentId"
                 defaultValue={departmentId}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-select"
               >
                 <option value="">-- Tous les départements --</option>
                 {departments?.map((department) => (
@@ -152,13 +152,11 @@ export default async function EngagementSearchPage({ searchParams }: Props) {
             </div>
 
             <div>
-              <label className="block text-sm font-semibold text-gray-700 mb-2">
-                Signataire
-              </label>
+              <label className="app-label">Signataire</label>
               <select
                 name="signatoryId"
                 defaultValue={signatoryId}
-                className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-blue-500"
+                className="app-select"
               >
                 <option value="">-- Tous les signataires --</option>
                 {signatories?.map((signatory) => (
@@ -169,50 +167,38 @@ export default async function EngagementSearchPage({ searchParams }: Props) {
               </select>
             </div>
 
-            <div className="md:col-span-2 grid md:grid-cols-4 gap-4 pt-2">
-              <button
-                type="submit"
-                className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-xl transition"
-              >
+            <div className="md:col-span-2 grid gap-4 md:grid-cols-4 pt-2">
+              <button type="submit" className="app-btn app-btn-blue py-4">
                 Recherche
               </button>
 
-              <Link
-                href="/engagement/search"
-                className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-              >
+              <Link href="/engagement/search" className="app-btn app-btn-outline py-4">
                 Réinitialiser
               </Link>
 
-              <Link
-                href="/"
-                className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-              >
+              <Link href="/" className="app-btn app-btn-outline py-4">
                 Home
               </Link>
 
-              <Link
-                href="/engagement"
-                className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-              >
+              <Link href="/engagement" className="app-btn app-btn-outline py-4">
                 Précédent
               </Link>
             </div>
           </form>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-xl p-8">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Résultats</h2>
+        <div className="app-card p-8 md:p-10">
+          <div className="mb-6 flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-slate-900">Résultats</h2>
             {hasFilters && (
-              <span className="text-sm text-gray-500">
+              <span className="rounded-full bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600">
                 {results?.length ?? 0} résultat(s)
               </span>
             )}
           </div>
 
           {!hasFilters ? (
-            <div className="border border-dashed border-gray-300 rounded-2xl p-8 text-center text-gray-500">
+            <div className="app-info text-center">
               Renseigne au moins un critère de recherche puis clique sur Recherche.
             </div>
           ) : results && results.length > 0 ? (
@@ -229,13 +215,18 @@ export default async function EngagementSearchPage({ searchParams }: Props) {
                 return (
                   <div
                     key={item.id}
-                    className="border border-gray-200 rounded-2xl p-5 bg-gray-50"
+                    className="rounded-3xl border border-slate-200 bg-slate-50 p-6 shadow-sm"
                   >
-                    <p className="text-lg font-bold text-blue-800 break-all mb-3">
-                      {item.reference_number}
-                    </p>
+                    <div className="mb-4 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <p className="break-all text-lg font-extrabold text-blue-800">
+                        {item.reference_number}
+                      </p>
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-sm font-semibold text-blue-800">
+                        N° {item.sequence_number}
+                      </span>
+                    </div>
 
-                    <div className="grid md:grid-cols-2 gap-3 text-sm text-gray-700">
+                    <div className="grid gap-3 text-sm text-slate-700 md:grid-cols-2">
                       <p>
                         <span className="font-semibold">Nom du client :</span>{" "}
                         {item.client_name}
@@ -252,17 +243,13 @@ export default async function EngagementSearchPage({ searchParams }: Props) {
                         <span className="font-semibold">Signataire :</span>{" "}
                         {signatory?.full_name ?? "-"}
                       </p>
-                      <p>
-                        <span className="font-semibold">N° :</span>{" "}
-                        {item.sequence_number}
-                      </p>
                     </div>
                   </div>
                 );
               })}
             </div>
           ) : (
-            <div className="border border-dashed border-red-300 bg-red-50 rounded-2xl p-8 text-center text-red-700">
+            <div className="app-error text-center">
               Aucun numéro de référence trouvé pour cette recherche.
             </div>
           )}

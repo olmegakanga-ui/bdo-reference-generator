@@ -40,111 +40,103 @@ export default function CorrespondenceForm({
   }, [recipientName, departmentId, issueDate, senderId]);
 
   return (
-    <main className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
-      <div className="w-full max-w-3xl bg-white rounded-2xl shadow-xl p-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Nouveau numéro - Correspondance
-        </h1>
-        <p className="text-gray-600 mb-8">
-          Renseigne les champs obligatoires pour générer un numéro de référence.
-        </p>
-
-        <form action={formAction} className="space-y-6">
+    <main className="app-page flex items-center justify-center p-6">
+      <div className="app-card w-full max-w-4xl p-8 md:p-10">
+        <div className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Destinataire *
-            </label>
-            <input
-              type="text"
-              name="recipientName"
-              value={recipientName}
-              onChange={(e) => setRecipientName(e.target.value)}
-              placeholder="Ex: FINCA RDC"
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
-            />
+            <h1 className="app-title">Nouveau numéro</h1>
+            <p className="app-subtitle">Correspondance</p>
           </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Département *
-            </label>
-            <select
-              name="departmentId"
-              value={departmentId}
-              onChange={(e) => setDepartmentId(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option value="">-- Choisir un département --</option>
-              {departments.map((department) => (
-                <option key={department.id} value={department.id}>
-                  {department.name}
-                </option>
-              ))}
-            </select>
+          <div className="hidden md:flex h-14 w-14 items-center justify-center rounded-2xl bg-green-600 text-white font-extrabold shadow-lg">
+            CO
           </div>
+        </div>
 
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Date d’émission *
-            </label>
-            <input
-              type="date"
-              name="issueDate"
-              value={issueDate}
-              onChange={(e) => setIssueDate(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-semibold text-gray-700 mb-2">
-              Expéditeur *
-            </label>
-            <select
-              name="senderId"
-              value={senderId}
-              onChange={(e) => setSenderId(e.target.value)}
-              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
-            >
-              <option value="">-- Choisir un expéditeur --</option>
-              {signatories.map((signatory) => (
-                <option key={signatory.id} value={signatory.id}>
-                  {signatory.full_name}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {state?.error && (
-            <div className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-red-700">
-              {state.error}
+        <form action={formAction} className="space-y-7">
+          <div className="grid gap-6 md:grid-cols-2">
+            <div>
+              <label className="app-label">Destinataire *</label>
+              <input
+                type="text"
+                name="recipientName"
+                value={recipientName}
+                onChange={(e) => setRecipientName(e.target.value)}
+                placeholder="Ex: Rawbank"
+                className="app-input"
+              />
             </div>
-          )}
 
-          <div className="grid grid-cols-3 gap-4 pt-4">
+            <div>
+              <label className="app-label">Département *</label>
+              <select
+                name="departmentId"
+                value={departmentId}
+                onChange={(e) => setDepartmentId(e.target.value)}
+                className="app-select"
+              >
+                <option value="">-- Choisir un département --</option>
+                {departments.map((department) => (
+                  <option key={department.id} value={department.id}>
+                    {department.name}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div>
+              <label className="app-label">Date d’émission *</label>
+              <input
+                type="date"
+                name="issueDate"
+                value={issueDate}
+                onChange={(e) => setIssueDate(e.target.value)}
+                className="app-input"
+              />
+            </div>
+
+            <div>
+              <label className="app-label">Expéditeur *</label>
+              <select
+                name="senderId"
+                value={senderId}
+                onChange={(e) => setSenderId(e.target.value)}
+                className="app-select"
+              >
+                <option value="">-- Choisir un expéditeur --</option>
+                {signatories.map((signatory) => (
+                  <option key={signatory.id} value={signatory.id}>
+                    {signatory.full_name}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          <div className="app-success">
+            Le numéro de référence sera généré automatiquement après validation du formulaire.
+          </div>
+
+          {state?.error && <div className="app-error">{state.error}</div>}
+
+          <div className="grid gap-4 md:grid-cols-3">
             <button
               type="submit"
               disabled={!isFormValid || isPending}
-              className={`font-semibold py-3 rounded-xl transition ${
+              className={`app-btn py-4 ${
                 isFormValid && !isPending
-                  ? "bg-green-600 hover:bg-green-700 text-white"
-                  : "bg-gray-300 text-gray-500 cursor-not-allowed"
+                  ? "app-btn-green"
+                  : "cursor-not-allowed bg-gray-300 text-gray-500"
               }`}
             >
-              {isPending ? "Génération..." : "Générer le numéro de référence"}
+              {isPending ? "Génération..." : "Générer le numéro"}
             </button>
 
-            <Link
-              href="/"
-              className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/" className="app-btn app-btn-outline py-4">
               Home
             </Link>
 
-            <Link
-              href="/correspondence"
-              className="border border-gray-300 text-center font-semibold py-3 rounded-xl hover:bg-gray-50"
-            >
+            <Link href="/correspondence" className="app-btn app-btn-outline py-4">
               Précédent
             </Link>
           </div>
