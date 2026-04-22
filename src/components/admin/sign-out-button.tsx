@@ -11,10 +11,10 @@ export default function SignOutButton() {
       type="button"
       onClick={() => startTransition(() => signOutAdmin())}
       disabled={isPending}
-      className={`font-semibold py-3 px-4 rounded-xl transition ${
+      className={`inline-flex items-center justify-center rounded-xl px-4 py-2 text-sm font-semibold transition ${
         !isPending
-          ? "bg-red-600 hover:bg-red-700 text-white"
-          : "bg-gray-300 text-gray-500 cursor-not-allowed"
+          ? "bg-white text-slate-900 hover:bg-slate-200"
+          : "cursor-not-allowed bg-slate-400 text-slate-700"
       }`}
     >
       {isPending ? "Déconnexion..." : "Se déconnecter"}

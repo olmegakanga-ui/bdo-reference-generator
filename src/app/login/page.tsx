@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import LoginForm from "@/components/auth/login-form";
 
 type Props = {
   searchParams: Promise<{
@@ -11,9 +11,9 @@ function getSingleValue(value?: string | string[]) {
   return value ?? "";
 }
 
-export default async function AdminLoginRedirectPage({ searchParams }: Props) {
+export default async function LoginPage({ searchParams }: Props) {
   const params = await searchParams;
   const nextPath = getSingleValue(params.next) || "/";
 
-  redirect(`/login?next=${encodeURIComponent(nextPath)}`);
+  return <LoginForm nextPath={nextPath} />;
 }

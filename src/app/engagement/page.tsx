@@ -7,13 +7,17 @@ export default function EngagementPage() {
         <div className="mb-8">
           <h1 className="app-title">Lettre d’engagement</h1>
           <p className="app-subtitle">
-            Générez, recherchez ou modifiez un numéro de référence.
+            Démander, recherchez, suivez ou modifiez un numéro de référence.
           </p>
         </div>
 
         <div className="grid gap-4">
           <Link href="/engagement/new" className="app-btn app-btn-blue py-4 text-base">
-            Nouveau numéro de référence
+            Nouvelle demande de numéro
+          </Link>
+
+          <Link href="/engagement/requests" className="app-btn app-btn-outline py-4 text-base">
+            Mes demandes
           </Link>
 
           <Link href="/engagement/search" className="app-btn app-btn-outline py-4 text-base">

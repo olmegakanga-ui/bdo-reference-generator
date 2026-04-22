@@ -2,13 +2,14 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { buildEngagementReference } from "@/lib/reference-utils";
+import { randomUUID } from "crypto";
+import { sendRiskReviewRequestEmail } from "@/lib/email";
 
 type ActionState = {
   error?: string;
 };
 
-export async function createEngagementReference(
+export async function createEngagementRequest(
   _prevState: ActionState,
   formData: FormData
 ): Promise<ActionState> {
@@ -18,154 +19,115 @@ export async function createEngagementReference(
   const signatoryId = Number(formData.get("signatoryId"));
 
   if (!clientName || !departmentId || !contractDate || !signatoryId) {
-    return {
-      error: "Tous les champs obligatoires doivent être remplis.",
-    };
+    return { error: "Tous les champs sont obligatoires." };
   }
 
   const supabase = await createClient();
 
-  // 1. Vérifier si un document identique existe déjà
-  const { data: existingRecord, error: existingError } = await supabase
-    .from("engagement_letters")
-    .select(
-      `
-      id,
-      client_name,
-      contract_date,
-      reference_number,
-      departments (
-        name
-      ),
-      signatories (
-        full_name,
-        initials
-      )
-    `
-    )
-    .ilike("client_name", clientName)
-    .eq("department_id", departmentId)
-    .eq("contract_date", contractDate)
-    .eq("signatory_id", signatoryId)
-    .maybeSingle();
+  // 🔐 récupérer utilisateur connecté
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  if (existingError) {
-    return {
-      error: `Erreur lors de la vérification du doublon : ${existingError.message}`,
-    };
+  if (!user || !user.email) {
+    return { error: "Utilisateur non connecté." };
   }
 
-  if (existingRecord) {
-    const signatory =
-      Array.isArray(existingRecord.signatories)
-        ? existingRecord.signatories[0]
-        : existingRecord.signatories;
+  const authEmail = user.email.trim().toLowerCase();
 
-    return {
-      error: `Ce client a déjà un document signé par ${signatory?.full_name ?? "ce signataire"} à la date du ${contractDate}.`,
-    };
+  // ✅ récupérer infos complémentaires depuis la bonne table
+  const { data: appUser, error: appUserError } = await supabase
+    .from("users")
+    .select("full_name, email")
+    .eq("email", authEmail)
+    .single();
+
+  if (appUserError) {
+    console.warn(
+      "Impossible de retrouver l'utilisateur métier :",
+      appUserError.message
+    );
   }
 
-  // 2. Charger le département
-  const { data: department, error: departmentError } = await supabase
+  // ✅ fallback intelligent si full_name absent
+  const requesterName =
+    appUser?.full_name?.trim() ||
+    user.user_metadata?.full_name ||
+    user.user_metadata?.name ||
+    authEmail.split("@")[0];
+
+  const requesterEmail = appUser?.email?.trim().toLowerCase() || authEmail;
+
+  // récupérer département
+  const { data: department } = await supabase
     .from("departments")
-    .select("id, name, engagement_code")
+    .select("id, name")
     .eq("id", departmentId)
     .single();
 
-  if (departmentError || !department) {
-    return {
-      error: "Département introuvable.",
-    };
-  }
-
-  // 3. Charger le signataire
-  const { data: signatory, error: signatoryError } = await supabase
+  // récupérer signataire
+  const { data: signatory } = await supabase
     .from("signatories")
-    .select("id, full_name, initials")
+    .select("id, full_name")
     .eq("id", signatoryId)
     .single();
 
-  if (signatoryError || !signatory) {
-    return {
-      error: "Signataire introuvable.",
-    };
+  if (!department || !signatory) {
+    return { error: "Informations invalides." };
   }
 
-  // 4. Charger le compteur du département
-  const { data: counter, error: counterError } = await supabase
-    .from("engagement_counters")
-    .select("id, last_number")
-    .eq("department_id", departmentId)
-    .single();
+  // 🔑 token unique
+  const reviewToken = randomUUID();
 
-  if (counterError || !counter) {
-    return {
-      error: "Compteur du département introuvable.",
-    };
-  }
-
-  const nextNumber = counter.last_number + 1;
-
-  // 5. Construire la référence
-  const referenceNumber = buildEngagementReference({
-    departmentCode: department.engagement_code,
-    contractDate,
-    sequenceNumber: nextNumber,
-    signatoryInitials: signatory.initials,
-  });
-
-  // 6. Enregistrer la lettre
-  const { data: insertedLetter, error: insertError } = await supabase
-    .from("engagement_letters")
+  // 💾 créer la demande
+  const { data: request, error } = await supabase
+    .from("engagement_requests")
     .insert({
+      requester_name: requesterName,
+      requester_email: requesterEmail,
       client_name: clientName,
       department_id: departmentId,
       contract_date: contractDate,
       signatory_id: signatoryId,
-      sequence_number: nextNumber,
-      reference_number: referenceNumber,
-      created_by_email: "system",
-      updated_by_email: "system",
+      status: "pending",
+      review_token: reviewToken,
     })
-    .select("id, reference_number")
+    .select()
     .single();
 
-  if (insertError) {
+  if (error || !request) {
+    console.error("Erreur création demande :", error);
     return {
-      error: `Erreur lors de l'enregistrement : ${insertError.message}`,
+      error: "Erreur lors de la création de la demande.",
     };
   }
 
-  // 7. Mettre à jour le compteur
-  const { error: updateCounterError } = await supabase
-    .from("engagement_counters")
-    .update({ last_number: nextNumber })
-    .eq("id", counter.id);
+  // 📧 envoyer email à la team risque
+  await sendRiskReviewRequestEmail({
+    requestId: request.id,
+    reviewToken,
+    requesterName,
+    requesterEmail,
+    clientName,
+    departmentName: department.name,
+    contractDate,
+    signatoryName: signatory.full_name,
+  });
 
-  if (updateCounterError) {
-    return {
-      error: `Le document a été créé, mais le compteur n'a pas pu être mis à jour : ${updateCounterError.message}`,
-    };
-  }
-
-  // 8. Journal d'audit simple
+  // 📊 audit log
   await supabase.from("audit_logs").insert({
-    user_email: "system",
-    action: "CREATE",
-    record_type: "engagement_letter",
-    record_id: insertedLetter.id,
+    user_email: requesterEmail,
+    action: "CREATE_REQUEST",
+    record_type: "engagement_request",
+    record_id: request.id,
     new_value: {
       client_name: clientName,
       department_id: departmentId,
       contract_date: contractDate,
       signatory_id: signatoryId,
-      sequence_number: nextNumber,
-      reference_number: referenceNumber,
     },
   });
 
-  redirect(
-    `/engagement/result?reference=${encodeURIComponent(referenceNumber)}`
-  );
+  // 🚀 redirection vers page confirmation
+  redirect(`/engagement/request/success?id=${request.id}`);
 }

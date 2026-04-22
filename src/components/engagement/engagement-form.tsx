@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useActionState, useMemo, useState } from "react";
 import type { Department, Signatory } from "@/types";
-import { createEngagementReference } from "@/app/engagement/new/actions";
+import { createEngagementRequest } from "@/app/engagement/new/actions";
 
 type Props = {
   departments: Department[];
@@ -22,10 +22,10 @@ export default function EngagementForm({ departments, signatories }: Props) {
   const [contractDate, setContractDate] = useState("");
   const [signatoryId, setSignatoryId] = useState("");
 
-  const [state, formAction, isPending] = useActionState(
-    createEngagementReference,
-    initialState
-  );
+ const [state, formAction, isPending] = useActionState(
+  createEngagementRequest,
+  initialState
+);
 
   const isFormValid = useMemo(() => {
     return (
@@ -41,7 +41,7 @@ export default function EngagementForm({ departments, signatories }: Props) {
       <div className="app-card w-full max-w-4xl p-8 md:p-10">
         <div className="mb-8 flex items-start justify-between gap-4">
           <div>
-            <h1 className="app-title">Nouveau numéro</h1>
+            <h1 className="app-title">Nouvelle demande</h1>
             <p className="app-subtitle">Lettre d’engagement</p>
           </div>
 
@@ -111,7 +111,7 @@ export default function EngagementForm({ departments, signatories }: Props) {
           </div>
 
           <div className="app-info">
-            Tous les champs marqués d’un astérisque sont obligatoires pour générer le numéro de référence.
+            Tous les champs marqués d’un astérisque sont obligatoires pour spumettre la demande à la team risque.
           </div>
 
           {state?.error && <div className="app-error">{state.error}</div>}
@@ -126,7 +126,7 @@ export default function EngagementForm({ departments, signatories }: Props) {
                   : "cursor-not-allowed bg-gray-300 text-gray-500"
               }`}
             >
-              {isPending ? "Génération..." : "Générer le numéro"}
+              {isPending ? "Génération..." : "Soumettre la demande"}
             </button>
 
             <Link href="/" className="app-btn app-btn-outline py-4">
