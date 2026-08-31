@@ -50,7 +50,9 @@ export async function approveEngagementRequest(
       requester_name,
       requester_email,
       client_name,
+      engagement_subject,
       contract_date,
+      created_at,
       department_id,
       signatory_id,
       status,
@@ -187,6 +189,9 @@ export async function approveEngagementRequest(
     requesterEmail: request.requester_email,
     requesterName: request.requester_name,
     referenceNumber,
+    clientName: request.client_name,
+    engagementSubject: request.engagement_subject ?? "-",
+    requestedAt: request.created_at,
   });
 
   redirect(`/engagement/request/review/${reviewToken}`);
@@ -223,7 +228,16 @@ export async function rejectEngagementRequest(
 
   const { data: request, error: requestError } = await supabase
     .from("engagement_requests")
-    .select("id, requester_name, requester_email, status, review_token")
+    .select(`
+      id,
+      requester_name,
+      requester_email,
+      client_name,
+      engagement_subject,
+      created_at,
+      status,
+      review_token
+    `)
     .eq("id", requestId)
     .eq("review_token", reviewToken)
     .single();
@@ -263,6 +277,9 @@ export async function rejectEngagementRequest(
     requesterEmail: request.requester_email,
     requesterName: request.requester_name,
     rejectionReason,
+    clientName: request.client_name,
+    engagementSubject: request.engagement_subject ?? "-",
+    requestedAt: request.created_at,
   });
 
   redirect(`/engagement/request/review/${reviewToken}`);

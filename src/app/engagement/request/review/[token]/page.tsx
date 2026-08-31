@@ -34,7 +34,9 @@ export default async function RiskReviewPage({ params }: Props) {
       requester_name,
       requester_email,
       client_name,
+      engagement_subject,
       contract_date,
+      created_at,
       status,
       reference_number,
       rejection_reason,
@@ -107,6 +109,10 @@ export default async function RiskReviewPage({ params }: Props) {
                   <InfoRow label="Email" value={request.requester_email} />
                   <InfoRow label="Client" value={request.client_name} />
                   <InfoRow
+                    label="Objectif de la mission"
+                    value={request.engagement_subject ?? "-"}
+                  />
+                  <InfoRow
                     label="Département"
                     value={department?.name ?? "-"}
                   />
@@ -157,6 +163,10 @@ export default async function RiskReviewPage({ params }: Props) {
                   <InfoRow label="Email" value={request.requester_email} />
                   <InfoRow label="Client" value={request.client_name} />
                   <InfoRow
+                    label="Objectif de la mission"
+                    value={request.engagement_subject ?? "-"}
+                  />
+                  <InfoRow
                     label="Département"
                     value={department?.name ?? "-"}
                   />
@@ -195,7 +205,9 @@ export default async function RiskReviewPage({ params }: Props) {
         requester_name: request.requester_name,
         requester_email: request.requester_email,
         client_name: request.client_name,
+        engagement_subject: request.engagement_subject ?? "-",
         contract_date: request.contract_date,
+        created_at: request.created_at,
         status: request.status,
         review_token: request.review_token,
         department_name: department?.name ?? "",

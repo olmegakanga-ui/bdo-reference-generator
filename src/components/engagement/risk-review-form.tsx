@@ -12,7 +12,9 @@ type RequestData = {
   requester_name: string;
   requester_email: string;
   client_name: string;
+  engagement_subject: string;
   contract_date: string;
+  created_at: string;
   status: string;
   review_token: string;
   department_name: string;
@@ -102,6 +104,14 @@ export default function RiskReviewForm({ request }: Props) {
                   <p>
                     <span className="font-semibold">Client :</span>{" "}
                     {request.client_name}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Objectif de la mission :</span>{" "}
+                    {request.engagement_subject}
+                  </p>
+                  <p>
+                    <span className="font-semibold">Date de la demande :</span>{" "}
+                    {formatDateDisplay(request.created_at)}
                   </p>
                   <p>
                     <span className="font-semibold">Département :</span>{" "}

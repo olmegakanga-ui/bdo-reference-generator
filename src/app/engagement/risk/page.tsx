@@ -112,6 +112,7 @@ export default async function RiskDashboardPage({ searchParams }: Props) {
       requester_name,
       requester_email,
       client_name,
+      engagement_subject,
       contract_date,
       status,
       reference_number,
@@ -320,6 +321,10 @@ export default async function RiskDashboardPage({ searchParams }: Props) {
                       <p>
                         <span className="font-semibold">Email :</span>{" "}
                         {request.requester_email}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Objectif de la mission :</span>{" "}
+                        {request.engagement_subject ?? "-"}
                       </p>
                       <p>
                         <span className="font-semibold">Département :</span>{" "}

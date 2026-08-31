@@ -79,6 +79,7 @@ export default async function EngagementRequestsPage({ searchParams }: Props) {
       requester_name,
       requester_email,
       client_name,
+      engagement_subject,
       contract_date,
       status,
       reference_number,
@@ -218,6 +219,10 @@ export default async function EngagementRequestsPage({ searchParams }: Props) {
                     </div>
 
                     <div className="grid gap-3 text-sm text-slate-700 md:grid-cols-2">
+                      <p>
+                        <span className="font-semibold">Objectif de la mission :</span>{" "}
+                        {request.engagement_subject ?? "-"}
+                      </p>
                       <p>
                         <span className="font-semibold">Département :</span>{" "}
                         {department?.name ?? "-"}

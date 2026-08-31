@@ -14,11 +14,20 @@ export async function createEngagementRequest(
   formData: FormData
 ): Promise<ActionState> {
   const clientName = String(formData.get("clientName") ?? "").trim();
+  const engagementSubject = String(
+    formData.get("engagementSubject") ?? ""
+  ).trim();
   const departmentId = Number(formData.get("departmentId"));
   const contractDate = String(formData.get("contractDate") ?? "").trim();
   const signatoryId = Number(formData.get("signatoryId"));
 
-  if (!clientName || !departmentId || !contractDate || !signatoryId) {
+  if (
+    !clientName ||
+    !engagementSubject ||
+    !departmentId ||
+    !contractDate ||
+    !signatoryId
+  ) {
     return { error: "Tous les champs sont obligatoires." };
   }
 
@@ -35,7 +44,7 @@ export async function createEngagementRequest(
 
   const authEmail = user.email.trim().toLowerCase();
 
-  // ✅ récupérer infos complémentaires depuis la bonne table
+  // ✅ récupérer infos complémentaires depuis la table users
   const { data: appUser, error: appUserError } = await supabase
     .from("users")
     .select("full_name, email")
@@ -49,23 +58,24 @@ export async function createEngagementRequest(
     );
   }
 
-  // ✅ fallback intelligent si full_name absent
+  // ✅ Nom du demandeur
   const requesterName =
     appUser?.full_name?.trim() ||
     user.user_metadata?.full_name ||
     user.user_metadata?.name ||
     authEmail.split("@")[0];
 
-  const requesterEmail = appUser?.email?.trim().toLowerCase() || authEmail;
+  const requesterEmail =
+    appUser?.email?.trim().toLowerCase() || authEmail;
 
-  // récupérer département
+  // 📂 récupérer département
   const { data: department } = await supabase
     .from("departments")
     .select("id, name")
     .eq("id", departmentId)
     .single();
 
-  // récupérer signataire
+  // ✍️ récupérer signataire
   const { data: signatory } = await supabase
     .from("signatories")
     .select("id, full_name")
@@ -86,6 +96,7 @@ export async function createEngagementRequest(
       requester_name: requesterName,
       requester_email: requesterEmail,
       client_name: clientName,
+      engagement_subject: engagementSubject,
       department_id: departmentId,
       contract_date: contractDate,
       signatory_id: signatoryId,
@@ -102,13 +113,14 @@ export async function createEngagementRequest(
     };
   }
 
-  // 📧 envoyer email à la team risque
+  // 📧 envoyer email à la Team Risk
   await sendRiskReviewRequestEmail({
     requestId: request.id,
     reviewToken,
     requesterName,
     requesterEmail,
     clientName,
+    engagementSubject,
     departmentName: department.name,
     contractDate,
     signatoryName: signatory.full_name,
@@ -122,12 +134,13 @@ export async function createEngagementRequest(
     record_id: request.id,
     new_value: {
       client_name: clientName,
+      engagement_subject: engagementSubject,
       department_id: departmentId,
       contract_date: contractDate,
       signatory_id: signatoryId,
     },
   });
 
-  // 🚀 redirection vers page confirmation
+  // 🚀 redirection vers la page de confirmation
   redirect(`/engagement/request/success?id=${request.id}`);
 }

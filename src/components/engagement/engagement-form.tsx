@@ -18,23 +18,31 @@ const initialState: ActionState = {};
 
 export default function EngagementForm({ departments, signatories }: Props) {
   const [clientName, setClientName] = useState("");
+  const [engagementSubject, setEngagementSubject] = useState("");
   const [departmentId, setDepartmentId] = useState("");
   const [contractDate, setContractDate] = useState("");
   const [signatoryId, setSignatoryId] = useState("");
 
- const [state, formAction, isPending] = useActionState(
-  createEngagementRequest,
-  initialState
-);
+  const [state, formAction, isPending] = useActionState(
+    createEngagementRequest,
+    initialState
+  );
 
   const isFormValid = useMemo(() => {
     return (
       clientName.trim() !== "" &&
+      engagementSubject.trim() !== "" &&
       departmentId.trim() !== "" &&
       contractDate.trim() !== "" &&
       signatoryId.trim() !== ""
     );
-  }, [clientName, departmentId, contractDate, signatoryId]);
+  }, [
+    clientName,
+    engagementSubject,
+    departmentId,
+    contractDate,
+    signatoryId,
+  ]);
 
   return (
     <main className="app-page flex items-center justify-center p-6">
@@ -52,6 +60,8 @@ export default function EngagementForm({ departments, signatories }: Props) {
 
         <form action={formAction} className="space-y-7">
           <div className="grid gap-6 md:grid-cols-2">
+
+            {/* Nom du client */}
             <div>
               <label className="app-label">Nom du client *</label>
               <input
@@ -59,11 +69,27 @@ export default function EngagementForm({ departments, signatories }: Props) {
                 name="clientName"
                 value={clientName}
                 onChange={(e) => setClientName(e.target.value)}
-                placeholder="Ex: FINCA RDC"
+                placeholder="Ex : FINCA RDC"
                 className="app-input"
               />
             </div>
 
+            {/* Objectif de la mission */}
+            <div>
+              <label className="app-label">
+                Objectif de la mission *
+              </label>
+              <input
+                type="text"
+                name="engagementSubject"
+                value={engagementSubject}
+                onChange={(e) => setEngagementSubject(e.target.value)}
+                placeholder="Ex : Audit des états financiers 2026"
+                className="app-input"
+              />
+            </div>
+
+            {/* Département */}
             <div>
               <label className="app-label">Département *</label>
               <select
@@ -73,6 +99,7 @@ export default function EngagementForm({ departments, signatories }: Props) {
                 className="app-select"
               >
                 <option value="">-- Choisir un département --</option>
+
                 {departments.map((department) => (
                   <option key={department.id} value={department.id}>
                     {department.name}
@@ -81,6 +108,7 @@ export default function EngagementForm({ departments, signatories }: Props) {
               </select>
             </div>
 
+            {/* Date */}
             <div>
               <label className="app-label">Date du contrat *</label>
               <input
@@ -92,6 +120,7 @@ export default function EngagementForm({ departments, signatories }: Props) {
               />
             </div>
 
+            {/* Signataire */}
             <div>
               <label className="app-label">Signataire *</label>
               <select
@@ -101,6 +130,7 @@ export default function EngagementForm({ departments, signatories }: Props) {
                 className="app-select"
               >
                 <option value="">-- Choisir un signataire --</option>
+
                 {signatories.map((signatory) => (
                   <option key={signatory.id} value={signatory.id}>
                     {signatory.full_name}
@@ -111,10 +141,13 @@ export default function EngagementForm({ departments, signatories }: Props) {
           </div>
 
           <div className="app-info">
-            Tous les champs marqués d’un astérisque sont obligatoires pour spumettre la demande à la team risque.
+            Tous les champs marqués d’un astérisque sont obligatoires pour
+            soumettre la demande à la Team Risk.
           </div>
 
-          {state?.error && <div className="app-error">{state.error}</div>}
+          {state?.error && (
+            <div className="app-error">{state.error}</div>
+          )}
 
           <div className="grid gap-4 md:grid-cols-3">
             <button
@@ -126,14 +159,17 @@ export default function EngagementForm({ departments, signatories }: Props) {
                   : "cursor-not-allowed bg-gray-300 text-gray-500"
               }`}
             >
-              {isPending ? "Génération..." : "Soumettre la demande"}
+              {isPending ? "Soumission..." : "Soumettre la demande"}
             </button>
 
             <Link href="/" className="app-btn app-btn-outline py-4">
               Home
             </Link>
 
-            <Link href="/engagement" className="app-btn app-btn-outline py-4">
+            <Link
+              href="/engagement"
+              className="app-btn app-btn-outline py-4"
+            >
               Précédent
             </Link>
           </div>
