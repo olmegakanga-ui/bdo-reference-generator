@@ -93,7 +93,7 @@ export default async function EngagementAdminPage({ searchParams }: Props) {
     .from("signatories")
     .select("id, full_name")
     .eq("is_active", true)
-    .eq("document_type", "engagement")
+    .in("document_type", ["engagement", "both"])
     .order("full_name");
 
   if (departmentsError) {
