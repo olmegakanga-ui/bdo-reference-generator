@@ -86,6 +86,7 @@ export default async function EngagementEditPage({ params }: Props) {
     .from("signatories")
     .select("id, full_name, initials")
     .eq("is_active", true)
+    .eq("document_type", "engagement")
     .order("full_name");
 
   if (departmentsError) {

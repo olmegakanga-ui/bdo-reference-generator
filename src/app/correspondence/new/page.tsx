@@ -13,6 +13,7 @@ export default async function CorrespondenceNewPage() {
     .from("signatories")
     .select("id, full_name, initials")
     .eq("is_active", true)
+    .eq("document_type", "correspondence")
     .order("full_name");
 
   if (departmentsError) {

@@ -9,4 +9,5 @@ export type Signatory = {
   id: number;
   full_name: string;
   initials: string;
+  document_type?: "engagement" | "correspondence";
 };

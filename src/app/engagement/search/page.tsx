@@ -37,6 +37,7 @@ export default async function EngagementSearchPage({ searchParams }: Props) {
     .from("signatories")
     .select("id, full_name")
     .eq("is_active", true)
+    .eq("document_type", "engagement")
     .order("full_name");
 
   if (departmentsError) {
