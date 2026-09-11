@@ -81,7 +81,7 @@ export async function createEngagementRequest(
     .select("id, full_name")
     .eq("id", signatoryId)
     .eq("is_active", true)
-    .eq("document_type", "engagement")
+    .in("document_type", ["engagement", "both"])
     .single();
 
   if (!department || !signatory) {
