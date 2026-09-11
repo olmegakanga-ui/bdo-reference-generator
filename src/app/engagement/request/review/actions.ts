@@ -2,18 +2,13 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentAppUser } from "@/lib/auth";
 import { buildEngagementReference } from "@/lib/reference-utils";
 import { sendApprovalEmail, sendRejectionEmail } from "@/lib/email";
 
 type ActionState = {
   error?: string;
 };
-
-const ALLOWED_RISK_EMAILS = [
-  "olmega.kanga@bdo-ea.com",
-  "sarman.ilunga@bdo-ea.com",
-  "brakini.biavanga@bdo-ea.com",
-];
 
 export async function approveEngagementRequest(
   _prevState: ActionState,
@@ -29,17 +24,14 @@ export async function approveEngagementRequest(
   const supabase = await createClient();
 
   // Utilisateur connecté = reviewer risque
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const reviewerEmail = user?.email?.trim().toLowerCase() ?? "";
+  const { authUser, appUser } = await getCurrentAppUser();
+  const reviewerEmail = authUser?.email?.trim().toLowerCase() ?? "";
 
   if (!reviewerEmail) {
     return { error: "Utilisateur non connecté." };
   }
 
-  if (!ALLOWED_RISK_EMAILS.includes(reviewerEmail)) {
+  if (appUser?.role !== "risk" && appUser?.role !== "admin") {
     return { error: "Vous n’êtes pas autorisé à traiter cette demande." };
   }
 
@@ -212,17 +204,14 @@ export async function rejectEngagementRequest(
   const supabase = await createClient();
 
   // Utilisateur connecté = reviewer risque
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  const reviewerEmail = user?.email?.trim().toLowerCase() ?? "";
+  const { authUser, appUser } = await getCurrentAppUser();
+  const reviewerEmail = authUser?.email?.trim().toLowerCase() ?? "";
 
   if (!reviewerEmail) {
     return { error: "Utilisateur non connecté." };
   }
 
-  if (!ALLOWED_RISK_EMAILS.includes(reviewerEmail)) {
+  if (appUser?.role !== "risk" && appUser?.role !== "admin") {
     return { error: "Vous n’êtes pas autorisé à traiter cette demande." };
   }
 
