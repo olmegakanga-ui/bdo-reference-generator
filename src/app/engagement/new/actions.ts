@@ -80,6 +80,8 @@ export async function createEngagementRequest(
     .from("signatories")
     .select("id, full_name")
     .eq("id", signatoryId)
+    .eq("is_active", true)
+    .eq("document_type", "engagement")
     .single();
 
   if (!department || !signatory) {

@@ -39,6 +39,7 @@ export default async function CorrespondenceSearchPage({
     .from("signatories")
     .select("id, full_name")
     .eq("is_active", true)
+    .eq("document_type", "correspondence")
     .order("full_name");
 
   if (departmentsError) {

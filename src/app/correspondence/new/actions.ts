@@ -83,6 +83,8 @@ export async function createCorrespondenceReference(
     .from("signatories")
     .select("id, full_name, initials")
     .eq("id", senderId)
+    .eq("is_active", true)
+    .eq("document_type", "correspondence")
     .single();
 
   if (senderError || !sender) {

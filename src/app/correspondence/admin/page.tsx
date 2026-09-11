@@ -93,6 +93,7 @@ export default async function CorrespondenceAdminPage({ searchParams }: Props) {
     .from("signatories")
     .select("id, full_name")
     .eq("is_active", true)
+    .eq("document_type", "correspondence")
     .order("full_name");
 
   if (departmentsError) {
@@ -169,6 +170,15 @@ export default async function CorrespondenceAdminPage({ searchParams }: Props) {
 
           <div className="mb-6 rounded-2xl bg-amber-50 border border-amber-200 px-4 py-3 text-sm text-amber-800">
             Connecté en tant que <span className="font-bold">{appUser.full_name}</span> ({appUser.email})
+          </div>
+
+          <div className="mb-6 flex flex-wrap gap-3">
+            <Link href="/admin/users" className="app-btn app-btn-blue px-5 py-3">
+              Ajouter un utilisateur
+            </Link>
+            <Link href="/admin/signatories" className="app-btn app-btn-amber px-5 py-3">
+              Gérer les signataires
+            </Link>
           </div>
 
           <form method="GET" className="grid gap-6 md:grid-cols-2">
