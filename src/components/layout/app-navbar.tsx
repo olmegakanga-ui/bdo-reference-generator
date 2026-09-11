@@ -2,12 +2,6 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import SignOutButton from "@/components/admin/sign-out-button";
 
-const RISK_ALLOWED_EMAILS = [
-  "olmega.kanga@bdo-ea.com",
-  "sarman.ilunga@bdo-ea.com",
-  "brakini.biavanga@bdo-ea.com",
-];
-
 export default async function AppNavbar() {
   const supabase = await createClient();
 
@@ -29,7 +23,7 @@ export default async function AppNavbar() {
 
   const fullName = appUser?.full_name ?? currentEmail;
   const isAdmin = appUser?.role === "admin";
-  const isRiskUser = RISK_ALLOWED_EMAILS.includes(currentEmail);
+  const isRiskUser = appUser?.role === "risk" || isAdmin;
 
   return (
     <header className="sticky top-0 z-50 border-b border-white/10 bg-slate-950/80 backdrop-blur-xl">

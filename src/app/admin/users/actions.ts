@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { getCurrentAppUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const ALLOWED_ROLES = ["admin", "user"] as const;
+const ALLOWED_ROLES = ["admin", "risk", "user"] as const;
 
 function redirectWithError(message: string): never {
   redirect(`/admin/users?error=${encodeURIComponent(message)}`);
