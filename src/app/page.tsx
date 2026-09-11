@@ -1,12 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 
-const RISK_ALLOWED_EMAILS = [
-  "olmega.kanga@bdo-ea.com",
-  "sarman.ilunga@bdo-ea.com",
-  "brakini.biavanga@bdo-ea.com",
-];
-
 export default async function HomePage() {
   const supabase = await createClient();
 
@@ -15,8 +9,7 @@ export default async function HomePage() {
   } = await supabase.auth.getUser();
 
   const currentEmail = user?.email?.trim().toLowerCase() ?? "";
-  const isRiskUser = RISK_ALLOWED_EMAILS.includes(currentEmail);
-
+  let isRiskUser = false;
   let isAdmin = false;
 
   if (currentEmail) {
@@ -27,6 +20,7 @@ export default async function HomePage() {
       .maybeSingle();
 
     isAdmin = appUser?.role === "admin";
+    isRiskUser = appUser?.role === "risk" || isAdmin;
   }
 
   return (
