@@ -122,6 +122,7 @@ export default async function AdminUsersPage({ searchParams }: Props) {
               </label>
               <select id="role" name="role" className="app-select" required>
                 <option value="user">Utilisateur</option>
+                <option value="risk">Risk</option>
                 <option value="admin">Administrateur</option>
               </select>
             </div>
@@ -159,7 +160,11 @@ export default async function AdminUsersPage({ searchParams }: Props) {
                   </div>
                   <div className="flex gap-2">
                     <span className="rounded-full bg-blue-100 px-3 py-1 text-xs font-bold text-blue-700">
-                      {user.role === "admin" ? "Administrateur" : "Utilisateur"}
+                      {user.role === "admin"
+                        ? "Administrateur"
+                        : user.role === "risk"
+                          ? "Risk"
+                          : "Utilisateur"}
                     </span>
                     <span
                       className={`rounded-full px-3 py-1 text-xs font-bold ${
