@@ -76,7 +76,7 @@ export default async function AdminSignatoriesPage({ searchParams }: Props) {
               </p>
               <h1 className="app-title mt-2">Gestion des signataires</h1>
               <p className="app-subtitle">
-                Gérez séparément les signataires des engagements et des correspondances.
+                Affectez chaque signataire aux engagements, aux correspondances ou aux deux modules.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -118,6 +118,7 @@ export default async function AdminSignatoriesPage({ searchParams }: Props) {
               <select id="documentType" name="documentType" className="app-select" required>
                 <option value="engagement">Lettre d’engagement</option>
                 <option value="correspondence">Correspondance</option>
+                <option value="both">Engagement et correspondance</option>
               </select>
             </div>
             <button type="submit" className="app-btn app-btn-amber md:col-span-4 py-4">
@@ -126,8 +127,8 @@ export default async function AdminSignatoriesPage({ searchParams }: Props) {
           </form>
         </section>
 
-        <section className="grid gap-6 lg:grid-cols-2">
-          {(["engagement", "correspondence"] as const).map((documentType) => {
+        <section className="grid gap-6 lg:grid-cols-3">
+          {(["engagement", "correspondence", "both"] as const).map((documentType) => {
             const moduleSignatories = signatories?.filter(
               (signatory) => signatory.document_type === documentType
             );
@@ -138,7 +139,9 @@ export default async function AdminSignatoriesPage({ searchParams }: Props) {
                   <h2 className="text-2xl font-extrabold text-slate-900">
                     {documentType === "engagement"
                       ? "Lettres d’engagement"
-                      : "Correspondances"}
+                      : documentType === "correspondence"
+                        ? "Correspondances"
+                        : "Les deux modules"}
                   </h2>
                   <p className="app-subtitle">
                     {moduleSignatories?.length ?? 0} signataire(s)
@@ -179,6 +182,7 @@ export default async function AdminSignatoriesPage({ searchParams }: Props) {
                           >
                             <option value="engagement">Engagement</option>
                             <option value="correspondence">Correspondance</option>
+                            <option value="both">Les deux</option>
                           </select>
                           <button type="submit" className="app-btn app-btn-outline px-3">
                             Affecter

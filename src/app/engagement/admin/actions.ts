@@ -94,7 +94,7 @@ export async function updateEngagementReference(
     .select("id, full_name, initials")
     .eq("id", signatoryId)
     .eq("is_active", true)
-    .eq("document_type", "engagement")
+    .in("document_type", ["engagement", "both"])
     .single();
 
   if (signatoryError || !signatory) {

@@ -84,7 +84,7 @@ export async function createCorrespondenceReference(
     .select("id, full_name, initials")
     .eq("id", senderId)
     .eq("is_active", true)
-    .eq("document_type", "correspondence")
+    .in("document_type", ["correspondence", "both"])
     .single();
 
   if (senderError || !sender) {

@@ -5,7 +5,7 @@ import { redirect } from "next/navigation";
 import { getCurrentAppUser } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const DOCUMENT_TYPES = ["engagement", "correspondence"] as const;
+const DOCUMENT_TYPES = ["engagement", "correspondence", "both"] as const;
 type DocumentType = (typeof DOCUMENT_TYPES)[number];
 
 function isDocumentType(value: string): value is DocumentType {
@@ -53,7 +53,7 @@ export async function createSignatory(formData: FormData) {
     );
   }
 
-  if (documentType === "correspondence") {
+  if (documentType === "correspondence" || documentType === "both") {
     const { error: counterError } = await adminClient
       .from("correspondence_counters")
       .insert({ signatory_id: signatory.id, last_number: 0 });
@@ -82,7 +82,7 @@ export async function updateSignatoryModule(formData: FormData) {
 
   const adminClient = createAdminClient();
 
-  if (documentType === "correspondence") {
+  if (documentType === "correspondence" || documentType === "both") {
     const { error: counterError } = await adminClient
       .from("correspondence_counters")
       .upsert(
