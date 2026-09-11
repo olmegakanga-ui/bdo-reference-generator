@@ -1,11 +1,6 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
-
-const ALLOWED_RISK_EMAILS = [
-  "olmega.kanga@bdo-ea.com",
-  "sarman.ilunga@bdo-ea.com",
-  "brakini.biavanga@bdo-ea.com",
-];
+import { getCurrentAppUser } from "@/lib/auth";
 
 function escapeCsvValue(value: string | number | null | undefined) {
   const stringValue = String(value ?? "");
@@ -18,18 +13,13 @@ function normalizeDate(value: string | null | undefined) {
 
 export async function GET() {
   const supabase = await createClient();
+  const { authUser, appUser } = await getCurrentAppUser();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user?.email) {
+  if (!authUser?.email) {
     return new NextResponse("Non autorisé", { status: 401 });
   }
 
-  const currentEmail = user.email.trim().toLowerCase();
-
-  if (!ALLOWED_RISK_EMAILS.includes(currentEmail)) {
+  if (appUser?.role !== "risk" && appUser?.role !== "admin") {
     return new NextResponse("Accès refusé", { status: 403 });
   }
 
