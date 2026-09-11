@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
+import { getCurrentAppUser } from "@/lib/auth";
 import { formatDateDisplay } from "@/lib/reference-utils";
 
 type Props = {
@@ -34,12 +35,6 @@ function getStatusLabel(status: string) {
       return "En attente";
   }
 }
-
-const ALLOWED_RISK_EMAILS = [
-  "olmega.kanga@bdo-ea.com",
-  "sarman.ilunga@bdo-ea.com",
-  "brakini.biavanga@bdo-ea.com",
-];
 
 export default async function RiskDashboardPage({ searchParams }: Props) {
   const params = await searchParams;
@@ -76,9 +71,10 @@ export default async function RiskDashboardPage({ searchParams }: Props) {
     );
   }
 
-  const currentEmail = user.email.trim().toLowerCase();
+  const { appUser } = await getCurrentAppUser();
+  const canAccessRisk = appUser?.role === "risk" || appUser?.role === "admin";
 
-  if (!ALLOWED_RISK_EMAILS.includes(currentEmail)) {
+  if (!canAccessRisk) {
     return (
       <main className="app-page flex items-center justify-center p-6">
         <div className="app-card w-full max-w-2xl p-8 text-center">
