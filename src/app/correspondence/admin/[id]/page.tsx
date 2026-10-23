@@ -66,6 +66,7 @@ export default async function CorrespondenceEditPage({ params }: Props) {
     .select(`
       id,
       recipient_name,
+      correspondence_subject,
       issue_date,
       department_id,
       sender_id,

@@ -15,11 +15,21 @@ export async function updateCorrespondenceReference(
 ): Promise<ActionState> {
   const recordId = Number(formData.get("recordId"));
   const recipientName = String(formData.get("recipientName") ?? "").trim();
+  const correspondenceSubject = String(
+    formData.get("correspondenceSubject") ?? ""
+  ).trim();
   const departmentId = Number(formData.get("departmentId"));
   const issueDate = String(formData.get("issueDate") ?? "").trim();
   const senderId = Number(formData.get("senderId"));
 
-  if (!recordId || !recipientName || !departmentId || !issueDate || !senderId) {
+  if (
+    !recordId ||
+    !recipientName ||
+    !correspondenceSubject ||
+    !departmentId ||
+    !issueDate ||
+    !senderId
+  ) {
     return {
       error: "Tous les champs obligatoires doivent être remplis.",
     };
@@ -40,6 +50,7 @@ export async function updateCorrespondenceReference(
     .select(`
       id,
       recipient_name,
+      correspondence_subject,
       issue_date,
       department_id,
       sender_id,
@@ -59,6 +70,7 @@ export async function updateCorrespondenceReference(
     .from("correspondences")
     .select("id")
     .ilike("recipient_name", recipientName)
+    .ilike("correspondence_subject", correspondenceSubject)
     .eq("department_id", departmentId)
     .eq("issue_date", issueDate)
     .eq("sender_id", senderId)
@@ -73,7 +85,7 @@ export async function updateCorrespondenceReference(
 
   if (duplicateRecord) {
     return {
-      error: "Un autre document existe déjà avec ces mêmes informations.",
+      error: "Un autre document existe déjà avec ce destinataire, cet objet, ce département, cette date et ce signataire.",
     };
   }
 
@@ -145,6 +157,7 @@ export async function updateCorrespondenceReference(
     .from("correspondences")
     .update({
       recipient_name: recipientName,
+      correspondence_subject: correspondenceSubject,
       department_id: departmentId,
       issue_date: issueDate,
       sender_id: senderId,
@@ -168,6 +181,7 @@ export async function updateCorrespondenceReference(
     old_value: existingRecord,
     new_value: {
       recipient_name: recipientName,
+      correspondence_subject: correspondenceSubject,
       department_id: departmentId,
       issue_date: issueDate,
       sender_id: senderId,

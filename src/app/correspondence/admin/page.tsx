@@ -7,6 +7,7 @@ import SignOutButton from "@/components/admin/sign-out-button";
 type Props = {
   searchParams: Promise<{
     recipient?: string | string[];
+    subject?: string | string[];
     issueDate?: string | string[];
     departmentId?: string | string[];
     senderId?: string | string[];
@@ -23,6 +24,7 @@ function getSingleValue(value?: string | string[]) {
 export default async function CorrespondenceAdminPage({ searchParams }: Props) {
   const params = await searchParams;
   const recipient = getSingleValue(params.recipient);
+  const subject = getSingleValue(params.subject);
   const issueDate = getSingleValue(params.issueDate);
   const departmentId = getSingleValue(params.departmentId);
   const senderId = getSingleValue(params.senderId);
@@ -109,6 +111,7 @@ export default async function CorrespondenceAdminPage({ searchParams }: Props) {
     .select(`
       id,
       recipient_name,
+      correspondence_subject,
       issue_date,
       sequence_number,
       reference_number,
@@ -127,6 +130,10 @@ export default async function CorrespondenceAdminPage({ searchParams }: Props) {
     query = query.ilike("recipient_name", `%${recipient.trim()}%`);
   }
 
+  if (subject.trim()) {
+    query = query.ilike("correspondence_subject", `%${subject.trim()}%`);
+  }
+
   if (issueDate.trim()) {
     query = query.eq("issue_date", issueDate);
   }
@@ -141,6 +148,7 @@ export default async function CorrespondenceAdminPage({ searchParams }: Props) {
 
   const hasFilters =
     recipient.trim() !== "" ||
+    subject.trim() !== "" ||
     issueDate.trim() !== "" ||
     departmentId.trim() !== "" ||
     senderId.trim() !== "";
@@ -188,6 +196,16 @@ export default async function CorrespondenceAdminPage({ searchParams }: Props) {
                 type="text"
                 name="recipient"
                 defaultValue={recipient}
+                className="app-input"
+              />
+            </div>
+
+            <div>
+              <label className="app-label">Objet</label>
+              <input
+                type="text"
+                name="subject"
+                defaultValue={subject}
                 className="app-input"
               />
             </div>
@@ -301,6 +319,10 @@ export default async function CorrespondenceAdminPage({ searchParams }: Props) {
                       <p>
                         <span className="font-semibold">Destinataire :</span>{" "}
                         {item.recipient_name}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Objet :</span>{" "}
+                        {item.correspondence_subject}
                       </p>
                       <p>
                         <span className="font-semibold">Département :</span>{" "}

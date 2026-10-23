@@ -8,6 +8,7 @@ import { updateCorrespondenceReference } from "@/app/correspondence/admin/action
 type RecordType = {
   id: number;
   recipient_name: string;
+  correspondence_subject: string;
   issue_date: string;
   department_id: number;
   sender_id: number;
@@ -33,6 +34,9 @@ export default function CorrespondenceEditForm({
   signatories,
 }: Props) {
   const [recipientName, setRecipientName] = useState(record.recipient_name);
+  const [correspondenceSubject, setCorrespondenceSubject] = useState(
+    record.correspondence_subject
+  );
   const [departmentId, setDepartmentId] = useState(String(record.department_id));
   const [issueDate, setIssueDate] = useState(record.issue_date);
   const [senderId, setSenderId] = useState(String(record.sender_id));
@@ -45,11 +49,12 @@ export default function CorrespondenceEditForm({
   const isFormValid = useMemo(() => {
     return (
       recipientName.trim() !== "" &&
+      correspondenceSubject.trim() !== "" &&
       departmentId.trim() !== "" &&
       issueDate.trim() !== "" &&
       senderId.trim() !== ""
     );
-  }, [recipientName, departmentId, issueDate, senderId]);
+  }, [recipientName, correspondenceSubject, departmentId, issueDate, senderId]);
 
   return (
     <main className="min-h-screen bg-gray-100 p-6 flex items-center justify-center">
@@ -75,6 +80,19 @@ export default function CorrespondenceEditForm({
               name="recipientName"
               value={recipientName}
               onChange={(e) => setRecipientName(e.target.value)}
+              className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-amber-500"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold text-gray-700 mb-2">
+              Objet de la correspondance *
+            </label>
+            <input
+              type="text"
+              name="correspondenceSubject"
+              value={correspondenceSubject}
+              onChange={(e) => setCorrespondenceSubject(e.target.value)}
               className="w-full border border-gray-300 rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-amber-500"
             />
           </div>

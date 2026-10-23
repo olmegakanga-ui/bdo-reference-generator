@@ -21,6 +21,7 @@ export default function CorrespondenceForm({
   signatories,
 }: Props) {
   const [recipientName, setRecipientName] = useState("");
+  const [correspondenceSubject, setCorrespondenceSubject] = useState("");
   const [departmentId, setDepartmentId] = useState("");
   const [issueDate, setIssueDate] = useState("");
   const [senderId, setSenderId] = useState("");
@@ -33,11 +34,12 @@ export default function CorrespondenceForm({
   const isFormValid = useMemo(() => {
     return (
       recipientName.trim() !== "" &&
+      correspondenceSubject.trim() !== "" &&
       departmentId.trim() !== "" &&
       issueDate.trim() !== "" &&
       senderId.trim() !== ""
     );
-  }, [recipientName, departmentId, issueDate, senderId]);
+  }, [recipientName, correspondenceSubject, departmentId, issueDate, senderId]);
 
   return (
     <main className="app-page flex items-center justify-center p-6">
@@ -63,6 +65,18 @@ export default function CorrespondenceForm({
                 value={recipientName}
                 onChange={(e) => setRecipientName(e.target.value)}
                 placeholder="Ex: Rawbank"
+                className="app-input"
+              />
+            </div>
+
+            <div>
+              <label className="app-label">Objet de la correspondance *</label>
+              <input
+                type="text"
+                name="correspondenceSubject"
+                value={correspondenceSubject}
+                onChange={(e) => setCorrespondenceSubject(e.target.value)}
+                placeholder="Ex : Transmission du rapport d’audit"
                 className="app-input"
               />
             </div>

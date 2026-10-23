@@ -5,6 +5,7 @@ import { formatDateDisplay } from "@/lib/reference-utils";
 type Props = {
   searchParams: Promise<{
     recipient?: string | string[];
+    subject?: string | string[];
     issueDate?: string | string[];
     departmentId?: string | string[];
     senderId?: string | string[];
@@ -24,6 +25,7 @@ export default async function CorrespondenceSearchPage({
   const params = await searchParams;
 
   const recipient = getSingleValue(params.recipient);
+  const subject = getSingleValue(params.subject);
   const issueDate = getSingleValue(params.issueDate);
   const departmentId = getSingleValue(params.departmentId);
   const senderId = getSingleValue(params.senderId);
@@ -55,6 +57,7 @@ export default async function CorrespondenceSearchPage({
     .select(`
       id,
       recipient_name,
+      correspondence_subject,
       issue_date,
       sequence_number,
       reference_number,
@@ -75,6 +78,10 @@ export default async function CorrespondenceSearchPage({
     query = query.ilike("recipient_name", `%${recipient.trim()}%`);
   }
 
+  if (subject.trim()) {
+    query = query.ilike("correspondence_subject", `%${subject.trim()}%`);
+  }
+
   if (issueDate.trim()) {
     query = query.eq("issue_date", issueDate);
   }
@@ -89,6 +96,7 @@ export default async function CorrespondenceSearchPage({
 
   const hasFilters =
     recipient.trim() !== "" ||
+    subject.trim() !== "" ||
     issueDate.trim() !== "" ||
     departmentId.trim() !== "" ||
     senderId.trim() !== "";
@@ -124,6 +132,17 @@ export default async function CorrespondenceSearchPage({
                 name="recipient"
                 defaultValue={recipient}
                 placeholder="Ex: Rawbank"
+                className="app-input"
+              />
+            </div>
+
+            <div>
+              <label className="app-label">Objet</label>
+              <input
+                type="text"
+                name="subject"
+                defaultValue={subject}
+                placeholder="Ex : Transmission du rapport d’audit"
                 className="app-input"
               />
             </div>
@@ -233,6 +252,10 @@ export default async function CorrespondenceSearchPage({
                       <p>
                         <span className="font-semibold">Destinataire :</span>{" "}
                         {item.recipient_name}
+                      </p>
+                      <p>
+                        <span className="font-semibold">Objet :</span>{" "}
+                        {item.correspondence_subject}
                       </p>
                       <p>
                         <span className="font-semibold">Département :</span>{" "}
