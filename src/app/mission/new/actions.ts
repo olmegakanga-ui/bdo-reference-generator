@@ -47,27 +47,13 @@ export async function createMissionOrderReference(
     return { error: "Signataire introuvable." };
   }
 
-  let { data: counter, error: counterError } = await supabase
-    .from("mission_order_counters")
-    .select("id, last_number")
-    .eq("signatory_id", signatoryId)
-    .maybeSingle();
+  const { data: nextNumber, error: counterError } = await supabase.rpc(
+    "next_mission_order_number"
+  );
 
-  if (!counter && !counterError) {
-    const { data: newCounter, error: newCounterError } = await supabase
-      .from("mission_order_counters")
-      .insert({ signatory_id: signatoryId, last_number: 0 })
-      .select("id, last_number")
-      .single();
-    counter = newCounter;
-    counterError = newCounterError;
+  if (counterError || typeof nextNumber !== "number") {
+    return { error: "Impossible de générer le prochain numéro d’ordre." };
   }
-
-  if (counterError || !counter) {
-    return { error: "Compteur du signataire introuvable." };
-  }
-
-  const nextNumber = counter.last_number + 1;
   const referenceNumber = buildMissionOrderReference({
     signatoryInitials: signatory.initials,
     issueDate,
@@ -91,15 +77,6 @@ export async function createMissionOrderReference(
 
   if (insertError) {
     return { error: `Erreur lors de l’enregistrement : ${insertError.message}` };
-  }
-
-  const { error: counterUpdateError } = await supabase
-    .from("mission_order_counters")
-    .update({ last_number: nextNumber })
-    .eq("id", counter.id);
-
-  if (counterUpdateError) {
-    return { error: `Le document a été créé, mais le compteur n’a pas pu être mis à jour : ${counterUpdateError.message}` };
   }
 
   await supabase.from("audit_logs").insert({
