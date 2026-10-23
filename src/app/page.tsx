@@ -50,7 +50,7 @@ export default async function HomePage() {
               Générateur de références
             </h1>
             <p className="mt-3 text-sm text-white/85 md:text-base">
-              Lettres d’engagement et correspondances
+              Lettres d’engagement, correspondances et ordres de mission
             </p>
           </div>
 
@@ -67,6 +67,13 @@ export default async function HomePage() {
               className="rounded-2xl bg-green-600 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:bg-green-700"
             >
               Correspondance
+            </Link>
+
+            <Link
+              href="/mission"
+              className="rounded-2xl bg-amber-600 px-6 py-4 text-center font-semibold text-white shadow-lg transition hover:bg-amber-700"
+            >
+              Ordre de mission
             </Link>
           </div>
 

@@ -36,6 +36,17 @@ export function buildCorrespondenceReference(params: {
   return `BDO/${params.departmentCode}/${params.senderInitials}/${formattedDate}/${formattedNumber}`;
 }
 
+export function buildMissionOrderReference(params: {
+  signatoryInitials: string;
+  issueDate: string;
+  sequenceNumber: number;
+}): string {
+  const formattedDate = formatDateToDDMMYYYY(params.issueDate);
+  const formattedNumber = formatSequenceNumber(params.sequenceNumber);
+
+  return `BDO-DRC ${params.signatoryInitials}/${formattedDate}/${formattedNumber}`;
+}
+
 export function formatDateDisplay(dateString: string): string {
   if (!dateString) return "";
 

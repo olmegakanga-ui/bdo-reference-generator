@@ -71,6 +71,13 @@ export default async function AppNavbar() {
           </Link>
 
           <Link
+            href="/mission"
+            className="rounded-xl px-4 py-2 text-sm font-semibold text-white/85 transition hover:bg-white/10 hover:text-white"
+          >
+            Missions
+          </Link>
+
+          <Link
             href="/engagement/requests"
             className="rounded-xl px-4 py-2 text-sm font-semibold text-white/85 transition hover:bg-white/10 hover:text-white"
           >
